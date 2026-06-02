@@ -13,8 +13,9 @@ type Project struct {
 	Title            string
 	DescriptionShort string
 	DescriptionLong  string
-	RepoUrl          string
-	LiveUrl          string
+	RepoUrl          pgtype.Text
+	LiveUrl          pgtype.Text
+	VideoUrl         pgtype.Text
 	CreatedAt        pgtype.Timestamptz
 	Featured         bool
 }
@@ -34,4 +35,11 @@ type Technology struct {
 	ID       int32
 	Name     string
 	IconSlug string
+}
+
+type User struct {
+	ID           int32
+	Username     string
+	PasswordHash string
+	CreatedAt    pgtype.Timestamptz
 }

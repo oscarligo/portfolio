@@ -11,43 +11,144 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const getProjectWithTechnologies = `-- name: GetProjectWithTechnologies :many
-SELECT 
-    p.id as project_id, p.title, p.description_short, p.featured,
-    t.id as tech_id, t.name as tech_name, t.icon_slug
-FROM project p
-LEFT JOIN project_technology pt ON p.id = pt.project_id
-LEFT JOIN technology t ON pt.technology_id = t.id
-WHERE p.id = $1
+const associateProjectTechnology = `-- name: AssociateProjectTechnology :exec
+INSERT INTO project_technology (
+    project_id, technology_id
+) VALUES (
+    $1, $2
+)
 `
 
-type GetProjectWithTechnologiesRow struct {
-	ProjectID        int32
-	Title            string
-	DescriptionShort string
-	Featured         bool
-	TechID           pgtype.Int4
-	TechName         pgtype.Text
-	IconSlug         pgtype.Text
+type AssociateProjectTechnologyParams struct {
+	ProjectID    int32
+	TechnologyID int32
 }
 
-func (q *Queries) GetProjectWithTechnologies(ctx context.Context, id int32) ([]GetProjectWithTechnologiesRow, error) {
-	rows, err := q.db.Query(ctx, getProjectWithTechnologies, id)
+func (q *Queries) AssociateProjectTechnology(ctx context.Context, arg AssociateProjectTechnologyParams) error {
+	_, err := q.db.Exec(ctx, associateProjectTechnology, arg.ProjectID, arg.TechnologyID)
+	return err
+}
+
+const createProject = `-- name: CreateProject :one
+INSERT INTO project (
+    title, description_short, description_long, repo_url, live_url, video_url, featured
+) VALUES (
+    $1, $2, $3, $4, $5, $6, $7
+) RETURNING id, title, description_short, description_long, repo_url, live_url, video_url, created_at, featured
+`
+
+type CreateProjectParams struct {
+	Title            string
+	DescriptionShort string
+	DescriptionLong  string
+	RepoUrl          pgtype.Text
+	LiveUrl          pgtype.Text
+	VideoUrl         pgtype.Text
+	Featured         bool
+}
+
+func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (Project, error) {
+	row := q.db.QueryRow(ctx, createProject,
+		arg.Title,
+		arg.DescriptionShort,
+		arg.DescriptionLong,
+		arg.RepoUrl,
+		arg.LiveUrl,
+		arg.VideoUrl,
+		arg.Featured,
+	)
+	var i Project
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.DescriptionShort,
+		&i.DescriptionLong,
+		&i.RepoUrl,
+		&i.LiveUrl,
+		&i.VideoUrl,
+		&i.CreatedAt,
+		&i.Featured,
+	)
+	return i, err
+}
+
+const createProjectImage = `-- name: CreateProjectImage :one
+INSERT INTO project_images (
+    project_id, image_url
+) VALUES (
+    $1, $2
+) RETURNING id, project_id, image_url
+`
+
+type CreateProjectImageParams struct {
+	ProjectID int32
+	ImageUrl  string
+}
+
+func (q *Queries) CreateProjectImage(ctx context.Context, arg CreateProjectImageParams) (ProjectImage, error) {
+	row := q.db.QueryRow(ctx, createProjectImage, arg.ProjectID, arg.ImageUrl)
+	var i ProjectImage
+	err := row.Scan(&i.ID, &i.ProjectID, &i.ImageUrl)
+	return i, err
+}
+
+const deleteProject = `-- name: DeleteProject :exec
+DELETE FROM project
+WHERE id = $1
+`
+
+func (q *Queries) DeleteProject(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, deleteProject, id)
+	return err
+}
+
+const getProject = `-- name: GetProject :one
+SELECT id, title, description_short, description_long, repo_url, live_url, video_url, created_at, featured FROM project
+WHERE id = $1 LIMIT 1
+`
+
+func (q *Queries) GetProject(ctx context.Context, id int32) (Project, error) {
+	row := q.db.QueryRow(ctx, getProject, id)
+	var i Project
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.DescriptionShort,
+		&i.DescriptionLong,
+		&i.RepoUrl,
+		&i.LiveUrl,
+		&i.VideoUrl,
+		&i.CreatedAt,
+		&i.Featured,
+	)
+	return i, err
+}
+
+const listFeaturedProjects = `-- name: ListFeaturedProjects :many
+SELECT id, title, description_short, description_long, repo_url, live_url, video_url, created_at, featured FROM project
+WHERE featured = true
+ORDER BY created_at DESC
+`
+
+func (q *Queries) ListFeaturedProjects(ctx context.Context) ([]Project, error) {
+	rows, err := q.db.Query(ctx, listFeaturedProjects)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetProjectWithTechnologiesRow
+	var items []Project
 	for rows.Next() {
-		var i GetProjectWithTechnologiesRow
+		var i Project
 		if err := rows.Scan(
-			&i.ProjectID,
+			&i.ID,
 			&i.Title,
 			&i.DescriptionShort,
+			&i.DescriptionLong,
+			&i.RepoUrl,
+			&i.LiveUrl,
+			&i.VideoUrl,
+			&i.CreatedAt,
 			&i.Featured,
-			&i.TechID,
-			&i.TechName,
-			&i.IconSlug,
 		); err != nil {
 			return nil, err
 		}
@@ -59,8 +160,59 @@ func (q *Queries) GetProjectWithTechnologies(ctx context.Context, id int32) ([]G
 	return items, nil
 }
 
+const listProjectImages = `-- name: ListProjectImages :many
+SELECT id, project_id, image_url FROM project_images
+WHERE project_id = $1
+`
+
+func (q *Queries) ListProjectImages(ctx context.Context, projectID int32) ([]ProjectImage, error) {
+	rows, err := q.db.Query(ctx, listProjectImages, projectID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ProjectImage
+	for rows.Next() {
+		var i ProjectImage
+		if err := rows.Scan(&i.ID, &i.ProjectID, &i.ImageUrl); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listProjectTechnologies = `-- name: ListProjectTechnologies :many
+SELECT t.id, t.name, t.icon_slug FROM technology t
+JOIN project_technology pt ON t.id = pt.technology_id
+WHERE pt.project_id = $1
+`
+
+func (q *Queries) ListProjectTechnologies(ctx context.Context, projectID int32) ([]Technology, error) {
+	rows, err := q.db.Query(ctx, listProjectTechnologies, projectID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Technology
+	for rows.Next() {
+		var i Technology
+		if err := rows.Scan(&i.ID, &i.Name, &i.IconSlug); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listProjects = `-- name: ListProjects :many
-SELECT id, title, description_short, description_long, repo_url, live_url, created_at, featured FROM project
+SELECT id, title, description_short, description_long, repo_url, live_url, video_url, created_at, featured FROM project
 ORDER BY created_at DESC
 `
 
@@ -80,6 +232,7 @@ func (q *Queries) ListProjects(ctx context.Context) ([]Project, error) {
 			&i.DescriptionLong,
 			&i.RepoUrl,
 			&i.LiveUrl,
+			&i.VideoUrl,
 			&i.CreatedAt,
 			&i.Featured,
 		); err != nil {
