@@ -40,6 +40,18 @@ func stringToPgtypeText(s string) pgtype.Text {
 	return pgtype.Text{String: s, Valid: true}
 }
 
+// Helper function to safely convert an interface{} to json.RawMessage, handling both []byte and other types
+func safeJSONRawMessage(v interface{}) json.RawMessage {
+	if bytes, ok := v.([]byte); ok {
+		return json.RawMessage(bytes)
+	}
+	bytes, err := json.Marshal(v)
+	if err != nil {
+		return json.RawMessage("[]")
+	}
+	return json.RawMessage(bytes)
+}
+
 // Struct espejo global para la respuesta HTTP unificada
 type fullProjectResponse struct {
 	ID             int32           `json:"id"`
@@ -58,7 +70,7 @@ type fullProjectResponse struct {
 func (h *ProjectHandler) ListProjects(w http.ResponseWriter, r *http.Request) {
 	rows, err := h.Store.ListProjects(r.Context())
 	if err != nil {
-		http.Error(w, "Error al obtener proyectos: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error while fetching projects: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -73,8 +85,8 @@ func (h *ProjectHandler) ListProjects(w http.ResponseWriter, r *http.Request) {
 			VideoUrl:       pgtypeToStringPtr(row.VideoUrl),
 			CreatedAt:      row.CreatedAt.Time,
 			Featured:       row.Featured,
-			Images:         json.RawMessage(row.Images.([]byte)),
-			Technologies:   json.RawMessage(row.Technologies.([]byte)),
+			Images:         safeJSONRawMessage(row.Images),
+			Technologies:   safeJSONRawMessage(row.Technologies),
 		}
 	}
 
@@ -87,7 +99,7 @@ func (h *ProjectHandler) ListProjects(w http.ResponseWriter, r *http.Request) {
 func (h *ProjectHandler) ListFeaturedProjects(w http.ResponseWriter, r *http.Request) {
 	rows, err := h.Store.ListFeaturedProjects(r.Context())
 	if err != nil {
-		http.Error(w, "Error al obtener proyectos destacados: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error while fetching featured projects: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -102,8 +114,8 @@ func (h *ProjectHandler) ListFeaturedProjects(w http.ResponseWriter, r *http.Req
 			VideoUrl:       pgtypeToStringPtr(row.VideoUrl),
 			CreatedAt:      row.CreatedAt.Time,
 			Featured:       row.Featured,
-			Images:         json.RawMessage(row.Images.([]byte)),
-			Technologies:   json.RawMessage(row.Technologies.([]byte)),
+			Images:         safeJSONRawMessage(row.Images),
+			Technologies:   safeJSONRawMessage(row.Technologies),
 		}
 	}
 
@@ -125,10 +137,10 @@ func (h *ProjectHandler) GetProject(w http.ResponseWriter, r *http.Request) {
 	row, err := h.Store.GetProject(r.Context(), int32(id))
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) || errors.Is(err, sql.ErrNoRows) {
-			http.Error(w, "Proyecto no encontrado", http.StatusNotFound)
+			http.Error(w, "Project not found", http.StatusNotFound)
 			return
 		}
-		http.Error(w, "Error al obtener el proyecto: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error while fetching the project: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -141,8 +153,8 @@ func (h *ProjectHandler) GetProject(w http.ResponseWriter, r *http.Request) {
 		VideoUrl:       pgtypeToStringPtr(row.VideoUrl),
 		CreatedAt:      row.CreatedAt.Time,
 		Featured:       row.Featured,
-		Images:         json.RawMessage(row.Images.([]byte)),
-		Technologies:   json.RawMessage(row.Technologies.([]byte)),
+		Images:         safeJSONRawMessage(row.Images),
+		Technologies:   safeJSONRawMessage(row.Technologies),
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -182,11 +194,10 @@ func (h *ProjectHandler) CreateProject(w http.ResponseWriter, r *http.Request) {
 		CreateProjectParams: repository.CreateProjectParams{
 			Title:          req.Title,
 			TranslationKey: req.TranslationKey,
-			// Transformamos los strings opcionales usando nuestro helper
-			RepoUrl:  stringToPgtypeText(req.RepoUrl),
-			LiveUrl:  stringToPgtypeText(req.LiveUrl),
-			VideoUrl: stringToPgtypeText(req.VideoUrl),
-			Featured: req.Featured,
+			RepoUrl:        stringToPgtypeText(req.RepoUrl),
+			LiveUrl:        stringToPgtypeText(req.LiveUrl),
+			VideoUrl:       stringToPgtypeText(req.VideoUrl),
+			Featured:       req.Featured,
 		},
 		ImageURLs:     req.Images,
 		TechnologyIDs: req.Technologies,
@@ -195,7 +206,7 @@ func (h *ProjectHandler) CreateProject(w http.ResponseWriter, r *http.Request) {
 	// Run tranction
 	project, err := h.Store.CreateProjectTx(r.Context(), arg)
 	if err != nil {
-		http.Error(w, "Error crítico al guardar el proyecto en la base de datos: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error while creating the project: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
