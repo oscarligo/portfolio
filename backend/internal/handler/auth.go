@@ -88,7 +88,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 5. Enviar la respuesta exitosa al cliente
+	// Return the token and expiration time in the response
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 

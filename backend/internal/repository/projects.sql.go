@@ -31,27 +31,25 @@ func (q *Queries) AssociateProjectTechnology(ctx context.Context, arg AssociateP
 
 const createProject = `-- name: CreateProject :one
 INSERT INTO project (
-    title, description_short, description_long, repo_url, live_url, video_url, featured
+    title, translation_key, repo_url, live_url, video_url, featured
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7
-) RETURNING id, title, description_short, description_long, repo_url, live_url, video_url, created_at, featured
+    $1, $2, $3, $4, $5, $6
+) RETURNING id, title, translation_key, repo_url, live_url, video_url, created_at, featured
 `
 
 type CreateProjectParams struct {
-	Title            string
-	DescriptionShort string
-	DescriptionLong  string
-	RepoUrl          pgtype.Text
-	LiveUrl          pgtype.Text
-	VideoUrl         pgtype.Text
-	Featured         bool
+	Title          string
+	TranslationKey string
+	RepoUrl        pgtype.Text
+	LiveUrl        pgtype.Text
+	VideoUrl       pgtype.Text
+	Featured       bool
 }
 
 func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (Project, error) {
 	row := q.db.QueryRow(ctx, createProject,
 		arg.Title,
-		arg.DescriptionShort,
-		arg.DescriptionLong,
+		arg.TranslationKey,
 		arg.RepoUrl,
 		arg.LiveUrl,
 		arg.VideoUrl,
@@ -61,8 +59,7 @@ func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (P
 	err := row.Scan(
 		&i.ID,
 		&i.Title,
-		&i.DescriptionShort,
-		&i.DescriptionLong,
+		&i.TranslationKey,
 		&i.RepoUrl,
 		&i.LiveUrl,
 		&i.VideoUrl,
@@ -103,52 +100,108 @@ func (q *Queries) DeleteProject(ctx context.Context, id int32) error {
 }
 
 const getProject = `-- name: GetProject :one
-SELECT id, title, description_short, description_long, repo_url, live_url, video_url, created_at, featured FROM project
-WHERE id = $1 LIMIT 1
+SELECT 
+    p.id, p.title, p.translation_key, p.repo_url, p.live_url, p.video_url, p.created_at, p.featured,
+    COALESCE(
+        (SELECT json_agg(item) FROM (SELECT id, image_url FROM project_images WHERE project_id = p.id) item), 
+        '[]'::json
+    ) AS images,
+    COALESCE(
+        (SELECT json_agg(tech) FROM (
+            SELECT t.id, t.name, t.icon_slug FROM technology t 
+            JOIN project_technology pt ON t.id = pt.technology_id 
+            WHERE pt.project_id = p.id
+        ) tech), 
+        '[]'::json
+    ) AS technologies
+FROM project p
+WHERE p.id = $1 LIMIT 1
 `
 
-func (q *Queries) GetProject(ctx context.Context, id int32) (Project, error) {
+type GetProjectRow struct {
+	ID             int32
+	Title          string
+	TranslationKey string
+	RepoUrl        pgtype.Text
+	LiveUrl        pgtype.Text
+	VideoUrl       pgtype.Text
+	CreatedAt      pgtype.Timestamptz
+	Featured       bool
+	Images         interface{}
+	Technologies   interface{}
+}
+
+func (q *Queries) GetProject(ctx context.Context, id int32) (GetProjectRow, error) {
 	row := q.db.QueryRow(ctx, getProject, id)
-	var i Project
+	var i GetProjectRow
 	err := row.Scan(
 		&i.ID,
 		&i.Title,
-		&i.DescriptionShort,
-		&i.DescriptionLong,
+		&i.TranslationKey,
 		&i.RepoUrl,
 		&i.LiveUrl,
 		&i.VideoUrl,
 		&i.CreatedAt,
 		&i.Featured,
+		&i.Images,
+		&i.Technologies,
 	)
 	return i, err
 }
 
 const listFeaturedProjects = `-- name: ListFeaturedProjects :many
-SELECT id, title, description_short, description_long, repo_url, live_url, video_url, created_at, featured FROM project
-WHERE featured = true
-ORDER BY created_at DESC
+SELECT 
+    p.id, p.title, p.translation_key, p.repo_url, p.live_url, p.video_url, p.created_at, p.featured,
+    COALESCE(
+        (SELECT json_agg(item) FROM (SELECT id, image_url FROM project_images WHERE project_id = p.id) item), 
+        '[]'::json
+    ) AS images,
+    COALESCE(
+        (SELECT json_agg(tech) FROM (
+            SELECT t.id, t.name, t.icon_slug FROM technology t 
+            JOIN project_technology pt ON t.id = pt.technology_id 
+            WHERE pt.project_id = p.id
+        ) tech), 
+        '[]'::json
+    ) AS technologies
+FROM project p
+WHERE p.featured = true
+ORDER BY p.created_at DESC
 `
 
-func (q *Queries) ListFeaturedProjects(ctx context.Context) ([]Project, error) {
+type ListFeaturedProjectsRow struct {
+	ID             int32
+	Title          string
+	TranslationKey string
+	RepoUrl        pgtype.Text
+	LiveUrl        pgtype.Text
+	VideoUrl       pgtype.Text
+	CreatedAt      pgtype.Timestamptz
+	Featured       bool
+	Images         interface{}
+	Technologies   interface{}
+}
+
+func (q *Queries) ListFeaturedProjects(ctx context.Context) ([]ListFeaturedProjectsRow, error) {
 	rows, err := q.db.Query(ctx, listFeaturedProjects)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Project
+	var items []ListFeaturedProjectsRow
 	for rows.Next() {
-		var i Project
+		var i ListFeaturedProjectsRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
-			&i.DescriptionShort,
-			&i.DescriptionLong,
+			&i.TranslationKey,
 			&i.RepoUrl,
 			&i.LiveUrl,
 			&i.VideoUrl,
 			&i.CreatedAt,
 			&i.Featured,
+			&i.Images,
+			&i.Technologies,
 		); err != nil {
 			return nil, err
 		}
@@ -212,29 +265,57 @@ func (q *Queries) ListProjectTechnologies(ctx context.Context, projectID int32) 
 }
 
 const listProjects = `-- name: ListProjects :many
-SELECT id, title, description_short, description_long, repo_url, live_url, video_url, created_at, featured FROM project
-ORDER BY created_at DESC
+SELECT 
+    p.id, p.title, p.translation_key, p.repo_url, p.live_url, p.video_url, p.created_at, p.featured,
+    COALESCE(
+        (SELECT json_agg(item) FROM (SELECT id, image_url FROM project_images WHERE project_id = p.id) item), 
+        '[]'::json
+    ) AS images,
+    COALESCE(
+        (SELECT json_agg(tech) FROM (
+            SELECT t.id, t.name, t.icon_slug FROM technology t 
+            JOIN project_technology pt ON t.id = pt.technology_id 
+            WHERE pt.project_id = p.id
+        ) tech), 
+        '[]'::json
+    ) AS technologies
+FROM project p
+ORDER BY p.created_at DESC
 `
 
-func (q *Queries) ListProjects(ctx context.Context) ([]Project, error) {
+type ListProjectsRow struct {
+	ID             int32
+	Title          string
+	TranslationKey string
+	RepoUrl        pgtype.Text
+	LiveUrl        pgtype.Text
+	VideoUrl       pgtype.Text
+	CreatedAt      pgtype.Timestamptz
+	Featured       bool
+	Images         interface{}
+	Technologies   interface{}
+}
+
+func (q *Queries) ListProjects(ctx context.Context) ([]ListProjectsRow, error) {
 	rows, err := q.db.Query(ctx, listProjects)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Project
+	var items []ListProjectsRow
 	for rows.Next() {
-		var i Project
+		var i ListProjectsRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Title,
-			&i.DescriptionShort,
-			&i.DescriptionLong,
+			&i.TranslationKey,
 			&i.RepoUrl,
 			&i.LiveUrl,
 			&i.VideoUrl,
 			&i.CreatedAt,
 			&i.Featured,
+			&i.Images,
+			&i.Technologies,
 		); err != nil {
 			return nil, err
 		}

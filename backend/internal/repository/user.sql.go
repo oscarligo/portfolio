@@ -22,7 +22,6 @@ type CreateUserParams struct {
 	PasswordHash string
 }
 
-// Útil para tu script CLI inicial de creación de administrador
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.db.QueryRow(ctx, createUser, arg.Username, arg.PasswordHash)
 	var i User

@@ -1,8 +1,7 @@
 CREATE TABLE IF NOT EXISTS project (
     id SERIAL PRIMARY KEY,
     title TEXT NOT NULL,
-    description_short TEXT NOT NULL,
-    description_long TEXT NOT NULL,
+    translation_key TEXT NOT NULL,
     repo_url TEXT NULL,
     live_url TEXT NULL,
     video_url TEXT NULL,

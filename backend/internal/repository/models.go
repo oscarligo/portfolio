@@ -9,15 +9,14 @@ import (
 )
 
 type Project struct {
-	ID               int32
-	Title            string
-	DescriptionShort string
-	DescriptionLong  string
-	RepoUrl          pgtype.Text
-	LiveUrl          pgtype.Text
-	VideoUrl         pgtype.Text
-	CreatedAt        pgtype.Timestamptz
-	Featured         bool
+	ID             int32
+	Title          string
+	TranslationKey string
+	RepoUrl        pgtype.Text
+	LiveUrl        pgtype.Text
+	VideoUrl       pgtype.Text
+	CreatedAt      pgtype.Timestamptz
+	Featured       bool
 }
 
 type ProjectImage struct {
