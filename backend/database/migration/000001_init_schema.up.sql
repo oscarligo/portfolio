@@ -3,8 +3,9 @@ CREATE TABLE IF NOT EXISTS project (
     title TEXT NOT NULL,
     description_short TEXT NOT NULL,
     description_long TEXT NOT NULL,
-    repo_url TEXT NOT NULL,
-    live_url TEXT NOT NULL,
+    repo_url TEXT NULL,
+    live_url TEXT NULL,
+    video_url TEXT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), 
     featured BOOLEAN NOT NULL DEFAULT FALSE 
 ); 
@@ -29,3 +30,10 @@ CREATE TABLE IF NOT EXISTS project_images (
     image_url TEXT NOT NULL,
     FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
 ); 
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL, 
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
