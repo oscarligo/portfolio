@@ -16,21 +16,22 @@ INSERT INTO technology (id, name, icon_slug) VALUES
 (12, 'React', 'react'),
 (13, 'Next.js', 'nextdotjs'),
 (14, 'Tailwind', 'tailwindcss'),
+(15, 'Express', 'express'),
 
 -- Databases
-(15, 'PostgreSQL', 'postgresql'),
-(16, 'Neo4j', 'neo4j'),
-(17, 'Redis', 'redis'),
+(16, 'PostgreSQL', 'postgresql'),
+(17, 'Neo4j', 'neo4j'),
+(18, 'Redis', 'redis'),
 
 -- DevOps and Cloud 
-(18, 'Docker', 'docker'),
-(19, 'GCP', 'googlecloud'),
-(20, 'Azure', 'azure'),
-(21, 'Nginx', 'nginx'),
-(22, 'Git', 'git'),
+(19, 'Docker', 'docker'),
+(20, 'GCP', 'googlecloud'),
+(21, 'Azure', 'azure'),
+(22, 'Nginx', 'nginx'),
+(23, 'Git', 'git'),
 
 -- IoT and Hardware
-(23, 'Arduino / ESP8266', 'arduino')
+(24, 'Arduino / ESP8266', 'arduino')
 
 ON CONFLICT (id) DO NOTHING;
 

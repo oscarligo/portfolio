@@ -14,7 +14,9 @@ INSERT INTO users (
     username, password_hash
 ) VALUES (
     $1, $2
-) RETURNING id, username, password_hash, created_at
+) 
+ON CONFLICT (username) DO NOTHING
+RETURNING id, username, password_hash, created_at
 `
 
 type CreateUserParams struct {
