@@ -7,4 +7,6 @@ INSERT INTO users (
     username, password_hash
 ) VALUES (
     $1, $2
-) RETURNING *;
+) 
+ON CONFLICT (username) DO NOTHING
+RETURNING *;
