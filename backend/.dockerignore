@@ -1,0 +1,11 @@
+.git
+.gitignore
+.dockerignore
+.DS_Store
+main
+bin/
+tmp/
+coverage/
+coverage.out
+*.coverprofile
+*.test
