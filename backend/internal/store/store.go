@@ -4,8 +4,10 @@ import (
 	"backend/internal/repository"
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Store struct encapsulates the database connection pool and the generated queries from sqlc, providing a unified interface for database operations.
@@ -75,4 +77,28 @@ func (store *Store) CreateProjectTx(ctx context.Context, arg CreateProjectTxPara
 	// If all operations completed successfully without errors, commit the changes definitively to PostgreSQL
 	err = tx.Commit(ctx)
 	return result, err
+}
+
+func (store *Store) CreateAdminUserIfNotExist(ctx context.Context, username, password string) error {
+	// Hasshing the password using bcrypt
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("Error while hashing password: %w", err)
+	}
+
+	// Attempt to insert the admin user into the database.
+	_, err = store.Queries.CreateUser(ctx, repository.CreateUserParams{
+		Username:     username,
+		PasswordHash: string(hashedPassword),
+	})
+
+	if err != nil {
+
+		if strings.Contains(err.Error(), "duplicate key") || strings.Contains(err.Error(), "unique constraint") {
+			return nil
+		}
+		return fmt.Errorf("Error while inserting the admin user: %w", err)
+	}
+
+	return nil
 }

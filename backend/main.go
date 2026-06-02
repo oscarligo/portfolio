@@ -50,6 +50,18 @@ func main() {
 
 	authHandler := handler.NewAuthHandler(projectStore, jwtSecret)
 
+	adminUsername := os.Getenv("ADMIN_USERNAME")
+	adminPassword := os.Getenv("ADMIN_PASSWORD")
+
+	if adminUsername != "" && adminPassword != "" {
+		err := projectStore.CreateAdminUserIfNotExist(ctx, adminUsername, adminPassword)
+		if err != nil {
+			log.Printf("Error while creating admin user: %v\n", err)
+		} else {
+			log.Println("Credentials for admin user are set.")
+		}
+	}
+
 	// Router setup
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
