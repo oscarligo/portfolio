@@ -94,9 +94,10 @@
 		font-weight: 600;
 		text-decoration: none;
 		transition:
-			transform 0.2s ease,
-			border-color 0.2s ease,
-			background-color 0.2s ease;
+		transform 0.2s ease,
+		border-color 0.2s ease,
+		background-color 0.2s ease;
+		width: 100%;
 	}
 
 	.project-actions a:hover {
@@ -110,9 +111,6 @@
 			padding: 1.2rem;
 		}
 
-		.project-actions {
-			flex-direction: column;
-		}
 
 		.project-actions a {
 			width: 100%;

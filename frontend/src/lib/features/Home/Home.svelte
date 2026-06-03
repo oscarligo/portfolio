@@ -5,7 +5,7 @@
 </script>
 
 <section class="home-page">
-	<section class="page-card hero-card">
+	<section class="page-card intro-card">
 		<p class="eyebrow">{$_('pages.home.eyebrow')}</p>
 		<h1>{$_('pages.home.title')}</h1>
 		<p>{$_('pages.home.message')}</p>
