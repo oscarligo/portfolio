@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { locale, _ } from 'svelte-i18n';
 	import './LanSelector.css';
-
+	
 	const supportedLanguages = [
 		{ code: 'es', label: 'ES' },
 		{ code: 'en', label: 'EN' }

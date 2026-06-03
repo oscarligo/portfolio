@@ -2,6 +2,7 @@
     import { page } from '$app/state';
     import { _ } from 'svelte-i18n';
     import LanSelector from '../LanSelector/LanSelector.svelte';
+    import ThemeToggle from '../ThemeToggle/ThemeToggle.svelte';
     import './Navbar.css';
 
     let isMenuOpen = $state(false);
@@ -57,5 +58,6 @@
         </div>
 
         <LanSelector />
+        <ThemeToggle />
     </div>
 </nav>

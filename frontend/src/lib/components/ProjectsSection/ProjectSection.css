@@ -9,7 +9,7 @@
 
 .eyebrow {
     margin: 0 0 0.8rem;
-    color: var(--accent);
+    color: var(--accent-text);
     font-size: 0.85rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -59,7 +59,7 @@ h2 {
     padding: 0.7rem 1rem;
     border: none;
     border-radius: 999px;
-    background: var(--accent);
+    background: var(--accent-text);
     color: #fff;
     font: inherit;
     font-weight: 700;

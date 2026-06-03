@@ -1,4 +1,8 @@
 {
+	"header": {
+		"title": "Oscar Rompich",
+		"description": "Software development portfolio."
+	},
 	"nav": {
 		"ariaLabel": "Primary navigation",
 		"brand": "Portfolio",

@@ -36,6 +36,7 @@
         "vitest": "^4.1.3"
     },
     "dependencies": {
+        "@lucide/svelte": "^1.3.0",
         "svelte-i18n": "^4.0.1"
     }
 }

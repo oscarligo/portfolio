@@ -5,12 +5,11 @@
     color: var(--text-secondary);
     font-size: 0.95rem;
     font-weight: 600;
-    background-color: var(--bg-surface);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
 }
 
-.lang-label {
-    white-space: nowrap;
-}
+
 
 select {
     border: 1px solid var(--border-color);
@@ -23,9 +22,9 @@ select {
 
 }
 
-@media (max-width: 640px) {
-.lang-selector {
-    justify-content: space-between;
-    width: 100%;
+select:hover {
+    background-color: var(--bg-surface);
+    color: var(--text-secondary);
+
 }
-}
+
