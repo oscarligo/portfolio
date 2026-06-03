@@ -14,6 +14,7 @@ import (
 	"backend/internal/handler"
 	customMiddleware "backend/internal/middleware"
 	"backend/internal/store"
+	"backend/internal/utils"
 )
 
 func main() {
@@ -46,7 +47,13 @@ func main() {
 
 	// Store and handlers
 	projectStore := store.NewStore(conn)
-	projectHandler := handler.NewProjectHandler(projectStore)
+	r2Uploader, err := utils.NewR2Uploader()
+	if err != nil {
+		log.Fatalf("Error while creating R2 uploader: %v", err)
+	}
+	log.Println("R2 uploader initialized successfully.")
+
+	projectHandler := handler.NewProjectHandler(projectStore, r2Uploader)
 
 	authHandler := handler.NewAuthHandler(projectStore, jwtSecret)
 

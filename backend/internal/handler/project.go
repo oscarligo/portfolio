@@ -4,12 +4,14 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
 	"backend/internal/repository"
 	"backend/internal/store"
+	"backend/internal/utils"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
@@ -17,11 +19,12 @@ import (
 )
 
 type ProjectHandler struct {
-	Store *store.Store
+	Store      *store.Store
+	R2Uploader *utils.R2Uploader
 }
 
-func NewProjectHandler(store *store.Store) *ProjectHandler {
-	return &ProjectHandler{Store: store}
+func NewProjectHandler(store *store.Store, uploader *utils.R2Uploader) *ProjectHandler {
+	return &ProjectHandler{Store: store, R2Uploader: uploader}
 }
 
 // Helper function to convert pgtype.Text to *string, handling NULL values correctly
@@ -175,42 +178,86 @@ type createProjectRequest struct {
 
 // POST /api/projects
 func (h *ProjectHandler) CreateProject(w http.ResponseWriter, r *http.Request) {
-	var req createProjectRequest
-
-	// Decode JSON body into the request struct, handling errors gracefully
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid JSON: "+err.Error(), http.StatusBadRequest)
+	// Parse multipart form with a  max memory limit
+	err := r.ParseMultipartForm(10 << 20)
+	if err != nil {
+		http.Error(w, "Error parsing multipart form: "+err.Error(), http.StatusBadRequest)
 		return
 	}
+	// Extract form values
+	title := r.FormValue("title")
+	translationKey := r.FormValue("translation_key")
+	repoUrl := r.FormValue("repo_url")
+	liveUrl := r.FormValue("live_url")
+	videoUrl := r.FormValue("video_url")
+	featuredStr := r.FormValue("featured")
 
-	// Validate required fields (title, description_short, description_long) and return a 400 Bad Request if any are missing
-	if req.Title == "" || req.TranslationKey == "" {
+	// Validate required fields
+	if title == "" || translationKey == "" {
 		http.Error(w, "Fields 'title' and 'translation_key' are required", http.StatusBadRequest)
 		return
 	}
 
-	// Map the incoming request to the CreateProjectTxParams struct, transforming optional string fields to pgtype.Text using our helper function
+	featured := featuredStr == "true"
+
+	// Extract technology IDs from form values
+	techStrings := r.MultipartForm.Value["technologies"]
+	var technologyIDs []int32
+
+	// Convert string IDs to int32
+	for _, ts := range techStrings {
+		var id int
+		if _, err := fmt.Sscanf(ts, "%d", &id); err == nil {
+			technologyIDs = append(technologyIDs, int32(id))
+		}
+	}
+
+	// Process uploaded images
+
+	files := r.MultipartForm.File["images"]
+	var imageURLs []string
+
+	// Iterate over uploaded files, upload them to R2, and collect their URLs
+	for _, fileHeader := range files {
+		file, err := fileHeader.Open()
+		if err != nil {
+			http.Error(w, "Error opening uploaded file: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		objectKey := fmt.Sprintf("projects/%d_%s", time.Now().UnixNano(), fileHeader.Filename)
+		contentType := fileHeader.Header.Get("Content-Type")
+
+		url, err := h.R2Uploader.UploadImage(r.Context(), objectKey, file, contentType)
+		file.Close()
+		if err != nil {
+			http.Error(w, "Error uploading image to R2: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		// Append the returned URL to the list of image URLs for this project
+		imageURLs = append(imageURLs, url)
+	}
+
+	// Create the project in the database.
 	arg := store.CreateProjectTxParams{
 		CreateProjectParams: repository.CreateProjectParams{
-			Title:          req.Title,
-			TranslationKey: req.TranslationKey,
-			RepoUrl:        stringToPgtypeText(req.RepoUrl),
-			LiveUrl:        stringToPgtypeText(req.LiveUrl),
-			VideoUrl:       stringToPgtypeText(req.VideoUrl),
-			Featured:       req.Featured,
+			Title:          title,
+			TranslationKey: translationKey,
+			RepoUrl:        stringToPgtypeText(repoUrl),
+			LiveUrl:        stringToPgtypeText(liveUrl),
+			VideoUrl:       stringToPgtypeText(videoUrl),
+			Featured:       featured,
 		},
-		ImageURLs:     req.Images,
-		TechnologyIDs: req.Technologies,
+		ImageURLs:     imageURLs,
+		TechnologyIDs: technologyIDs,
 	}
 
-	// Run tranction
 	project, err := h.Store.CreateProjectTx(r.Context(), arg)
 	if err != nil {
-		http.Error(w, "Error while creating the project: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error while creating the project in database: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	// API response with the created project
+	// Return the created project as JSON response
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(project)
