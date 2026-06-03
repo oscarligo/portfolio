@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { _ } from 'svelte-i18n';
+	import './Home.css';
 </script>
 
 <section class="page-card">
@@ -7,34 +8,3 @@
 	<h1>{$_('pages.home.title')}</h1>
 	<p>{$_('pages.home.message')}</p>
 </section>
-
-<style>
-	.page-card {
-		padding: 2rem;
-		border: 1px solid var(--border-color);
-		border-radius: 24px;
-		background: color-mix(in srgb, var(--bg-primary) 92%, white 8%);
-		box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
-	}
-
-	.eyebrow {
-		margin: 0 0 0.75rem;
-		color: var(--accent);
-		font-size: 0.85rem;
-		font-weight: 700;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-	}
-
-	h1 {
-		margin: 0 0 0.75rem;
-		font-size: clamp(2rem, 5vw, 3.25rem);
-	}
-
-	p {
-		margin: 0;
-		color: var(--text-secondary);
-		font-size: 1.05rem;
-		line-height: 1.6;
-	}
-</style>

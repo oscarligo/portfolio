@@ -1,9 +1,9 @@
 {
 	"nav": {
 		"ariaLabel": "Navegacion principal",
-		"brand": "Portfolio",
+		"brand": "Portafolio",
 		"home": "Home",
-		"aboutPortfolio": "AboutPortfolio",
+		"aboutPortfolio": "Acerca de este portfolio",
 		"language": "Idioma",
 		"changeLanguage": "Cambiar idioma"
 	},
@@ -13,8 +13,8 @@
 			"message": "Hola mundo desde Home."
 		},
 		"aboutPortfolio": {
-			"title": "AboutPortfolio",
-			"message": "Hola mundo desde AboutPortfolio."
+			"title": "Acerca de este portfolio",
+			"message": "Hola mundo desde Acerca de este portfolio."
 		}
 	}
 }

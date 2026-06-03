@@ -3,7 +3,7 @@
 		"ariaLabel": "Primary navigation",
 		"brand": "Portfolio",
 		"home": "Home",
-		"aboutPortfolio": "AboutPortfolio",
+		"aboutPortfolio": "About this portfolio",
 		"language": "Language",
 		"changeLanguage": "Change language"
 	},
@@ -13,8 +13,8 @@
 			"message": "Hello world from Home."
 		},
 		"aboutPortfolio": {
-			"title": "AboutPortfolio",
-			"message": "Hello world from AboutPortfolio."
+			"title": "About this portfolio",
+			"message": "Hello world from About this portfolio."
 		}
 	}
 }
