@@ -1,12 +1,29 @@
-FROM node:20-alpine
+# Stage 1: Build
+FROM node:22-alpine AS builder
 WORKDIR /app
 
-RUN npm install -g pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+COPY package.json pnpm-lock.yaml* ./
 
-COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 COPY . .
+RUN pnpm exec svelte-kit sync
+RUN pnpm run build
 
-EXPOSE 5173
-CMD ["pnpm", "dev", "--host", "0.0.0.0"]
+RUN rm -rf node_modules && pnpm install --prod --frozen-lockfile --ignore-scripts
+
+# STAGE 2: Production
+FROM node:22-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=3000
+
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/build ./build
+
+EXPOSE 3000
+
+CMD ["node", "build/index.js"]

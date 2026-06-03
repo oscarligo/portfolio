@@ -7,14 +7,101 @@
 		"language": "Idioma",
 		"changeLanguage": "Cambiar idioma"
 	},
+	"projects": {
+		"loading": "Cargando proyectos desde el API...",
+		"empty": "Todavía no hay proyectos publicados.",
+		"errorTitle": "No se pudieron cargar los proyectos.",
+		"unexpectedError": "Ocurrió un error inesperado.",
+		"retry": "Reintentar",
+		"featured": "Destacado",
+		"published": "Publicado",
+		"technologies": "Tecnologías",
+		"actions": {
+			"repository": "Repositorio",
+			"liveDemo": "Demo en vivo",
+			"video": "Video"
+		}
+	},
 	"pages": {
 		"home": {
-			"title": "Home",
-			"message": "Hola mundo desde Home."
+			"eyebrow": "Portafolio personal",
+			"title": "Desarrollo Full-Stack",
+			"message": "Hola, soy Oscar. Me dedico a construir aplicaciones web y móviles, eficientes y escalables. ",
+			"projects": {
+				"eyebrow": "Proyectos",
+				"title": "Trabajo reciente",
+				"description": "Estos son algunos de los proyectos en los que he trabajado recientemente. Cada uno incluye una descripción, las tecnologías utilizadas y enlaces a repositorios o demos cuando están disponibles."
+			}
 		},
 		"aboutPortfolio": {
-			"title": "Acerca de este portafolio",
-			"message": "Hola mundo desde Acerca de este portafolio."
+			"eyebrow": "Arquitectura del proyecto",
+			"title": "Este portafolio está construido como una aplicación full stack pequeña, clara y fácil de extender.",
+			"message": "La idea es separar bien responsabilidades: el frontend se concentra en experiencia e interfaz, mientras que el backend expone datos, autenticación y subida de medios mediante un API simple.",
+			"frontend": {
+				"label": "Frontend",
+				"title": "SvelteKit + TypeScript para una UI ligera y rápida.",
+				"description": "La capa visual vive en Svelte con TypeScript, aprovechando componentes pequeños, rutas sencillas y una integración directa con el API para mantener baja la complejidad.",
+				"items": {
+					"framework": {
+						"title": "SvelteKit como base de la app",
+						"description": "Se usa para organizar rutas, layouts y componentes con una estructura clara, ideal para un portafolio que crecerá con nuevas secciones."
+					},
+					"language": {
+						"title": "TypeScript para contratos más seguros",
+						"description": "El tipado ayuda a mantener alineado el frontend con la respuesta real del backend, especialmente en proyectos, imágenes y tecnologías."
+					},
+					"i18n": {
+						"title": "svelte-i18n para internacionalización",
+						"description": "La interfaz ya puede alternar entre español e inglés, lo que permite documentar el portafolio y sus secciones en más de un idioma."
+					},
+					"tooling": {
+						"title": "Vite y pnpm para desarrollo rápido",
+						"description": "El entorno de trabajo prioriza recargas ágiles, dependencias controladas y un flujo simple para desarrollo local."
+					}
+				}
+			},
+			"backend": {
+				"label": "Backend",
+				"title": "Go + Chi + PostgreSQL como API del portafolio.",
+				"description": "La API expone proyectos, autenticación y operaciones administrativas con un stack sencillo, performante y cómodo de mantener.",
+				"items": {
+					"api": {
+						"title": "Chi para enrutado HTTP",
+						"description": "El router mantiene endpoints pequeños y directos, suficiente para un portafolio con un dominio claro y pocas capas innecesarias."
+					},
+					"persistence": {
+						"title": "PostgreSQL con pgx y sqlc",
+						"description": "Las consultas viven en archivos SQL y `sqlc` genera tipos de Go, lo que ofrece control sobre la base sin introducir un ORM pesado."
+					},
+					"auth": {
+						"title": "JWT para la parte administrativa",
+						"description": "La autenticación protege las operaciones de creación y borrado de proyectos sin complicar el acceso público a la información."
+					},
+					"storage": {
+						"title": "Cloudflare R2 para imágenes",
+						"description": "Las imágenes de proyectos se almacenan fuera del backend, evitando sobrecargar el servidor y dejando las URLs listas para el frontend."
+					}
+				}
+			},
+			"architecture": {
+				"label": "Cómo se conectan",
+				"title": "El frontend consume un contrato simple y el backend devuelve datos listos para renderizar.",
+				"description": "La página principal obtiene proyectos desde el API, normaliza la respuesta en el cliente y delega el render a un componente reutilizable de tarjetas.",
+				"points": {
+					"contract": {
+						"title": "Contrato HTTP claro",
+						"description": "Los endpoints `/api/projects` y `/api/projects/featured` entregan proyectos con enlaces, imágenes y tecnologías en una sola respuesta."
+					},
+					"data": {
+						"title": "Normalización en el cliente",
+						"description": "El servicio del frontend corrige nulos y estructuras variables para que los componentes trabajen con un tipo consistente."
+					},
+					"delivery": {
+						"title": "Infraestructura reproducible",
+						"description": "Docker Compose levanta PostgreSQL, backend y frontend para que el entorno local sea fácil de replicar."
+					}
+				}
+			}
 		}
 	}
 }

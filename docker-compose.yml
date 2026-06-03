@@ -50,17 +50,15 @@ services:
     env_file:
     - ./.env
     ports:
-      - "${FRONTEND_PORT}:5173"
+      - "5173:3000"
     environment:
       - CHOKIDAR_USEPOLLING=true
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ORIGIN=https://rompich.me
     depends_on:
       backend:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:5173 >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000 >/dev/null || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 10

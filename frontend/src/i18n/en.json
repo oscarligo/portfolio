@@ -7,14 +7,101 @@
 		"language": "Language",
 		"changeLanguage": "Change language"
 	},
+	"projects": {
+		"loading": "Loading projects from the API...",
+		"empty": "There are no published projects yet.",
+		"errorTitle": "Projects could not be loaded.",
+		"unexpectedError": "An unexpected error occurred.",
+		"retry": "Try again",
+		"featured": "Featured",
+		"published": "Published",
+		"technologies": "Technologies",
+		"actions": {
+			"repository": "Repository",
+			"liveDemo": "Live demo",
+			"video": "Video"
+		}
+	},
 	"pages": {
 		"home": {
-			"title": "Home",
-			"message": "Hello world from Home."
+			"eyebrow": "Personal portfolio",
+			"title": "Full-Stack Development",
+			"message": "Hi, I'm Oscar. I build efficient and scalable web and mobile applications.",
+			"projects": {
+				"eyebrow": "Projects",
+				"title": "Recent work",
+				"description": "Here are some of the projects I've worked on recently. Each includes a description, technologies used, and links to repositories or demos when available."
+			}
 		},
 		"aboutPortfolio": {
-			"title": "About this portfolio",
-			"message": "Hello world from About this portfolio."
+			"eyebrow": "Project architecture",
+			"title": "This portfolio is built as a small, clear, and easy-to-extend full stack application.",
+			"message": "The goal is to keep responsibilities well separated: the frontend focuses on the experience and interface, while the backend exposes data, authentication, and media uploads through a simple API.",
+			"frontend": {
+				"label": "Frontend",
+				"title": "SvelteKit + TypeScript for a lightweight and fast UI.",
+				"description": "The visual layer lives in Svelte with TypeScript, using small components, simple routes, and direct API integration to keep complexity low.",
+				"items": {
+					"framework": {
+						"title": "SvelteKit as the app foundation",
+						"description": "It organizes routes, layouts, and components with a clear structure that fits a portfolio expected to grow with new sections."
+					},
+					"language": {
+						"title": "TypeScript for safer contracts",
+						"description": "Typing keeps the frontend aligned with the real backend response, especially for projects, images, and technologies."
+					},
+					"i18n": {
+						"title": "svelte-i18n for localization",
+						"description": "The interface can already switch between Spanish and English, making the portfolio and its documentation accessible in more than one language."
+					},
+					"tooling": {
+						"title": "Vite and pnpm for fast development",
+						"description": "The tooling favors quick reloads, controlled dependencies, and a simple local development workflow."
+					}
+				}
+			},
+			"backend": {
+				"label": "Backend",
+				"title": "Go + Chi + PostgreSQL as the portfolio API.",
+				"description": "The API exposes projects, authentication, and admin operations with a stack that is simple, performant, and easy to maintain.",
+				"items": {
+					"api": {
+						"title": "Chi for HTTP routing",
+						"description": "The router keeps endpoints small and direct, which is enough for a portfolio with a clear domain and very few unnecessary layers."
+					},
+					"persistence": {
+						"title": "PostgreSQL with pgx and sqlc",
+						"description": "Queries live in SQL files and `sqlc` generates Go types, giving direct control over the database without adding a heavy ORM."
+					},
+					"auth": {
+						"title": "JWT for the admin area",
+						"description": "Authentication protects project creation and deletion while keeping public access to the content straightforward."
+					},
+					"storage": {
+						"title": "Cloudflare R2 for images",
+						"description": "Project images are stored outside the backend, which keeps the server lean and gives the frontend ready-to-use URLs."
+					}
+				}
+			},
+			"architecture": {
+				"label": "How it connects",
+				"title": "The frontend consumes a simple contract and the backend returns data ready to render.",
+				"description": "The home page fetches projects from the API, normalizes the response in the client, and hands rendering to a reusable card-based component.",
+				"points": {
+					"contract": {
+						"title": "Clear HTTP contract",
+						"description": "The `/api/projects` and `/api/projects/featured` endpoints return projects with links, images, and technologies in a single response."
+					},
+					"data": {
+						"title": "Client-side normalization",
+						"description": "The frontend service corrects nulls and variable shapes so components can work against a consistent type."
+					},
+					"delivery": {
+						"title": "Reproducible infrastructure",
+						"description": "Docker Compose brings up PostgreSQL, the backend, and the frontend so the local environment is easy to reproduce."
+					}
+				}
+			}
 		}
 	}
 }
