@@ -24,12 +24,17 @@ html {
 
 body {
 	margin: 0;
-	min-height: 100vh;
-	font-family: var(--font-sans);
-	background:
-		radial-gradient(circle at top, rgba(37, 99, 235, 0.08), transparent 30%),
-		linear-gradient(180deg, var(--bg-primary), color-mix(in srgb, var(--bg-surface) 88%, white 12%));
-	color: var(--text-primary);
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    background-color: var(--bg-primary); 
+    background-image:
+        radial-gradient(circle at top center, rgba(37, 99, 235, 0.12), transparent 45%),
+        linear-gradient(180deg, var(--bg-primary) 0%, color-mix(in srgb, var(--bg-surface) 40%, var(--bg-primary)) 100%);
+    background-repeat: no-repeat;
+    background-attachment: fixed; 
+    background-size: cover; 
+    transition: background-color 0.3s ease;
 }
 
 a {
@@ -47,11 +52,11 @@ a {
 }
 
 html.dark {
-	--bg-primary: #1c2336;
-	--bg-surface: #18233d;
+	--bg-primary: #07090f;
+	--bg-surface: #070b13;
 	--text-primary: #f8fafc;
 	--text-secondary: #94a3b8;
-	--border-color: #1e293b;
+	--border-color: #0c0c0d;
 	--accent-text: #60a5fa;
 	--accent: #174884;       
 	--accent-hover: #93c5fd;

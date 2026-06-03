@@ -1,0 +1,82 @@
+
+.about-me-card {
+    background:
+        radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 12%, transparent), transparent 34%),
+        color-mix(in srgb, var(--bg-primary) 94%, white 6%);
+    border: 1px solid var(--border-color);
+    border-radius: 1.5rem; 
+    padding: 2.5rem;
+    transition: var(--theme-transition), transform 0.3s ease, box-shadow 0.3s ease;
+    margin: 2rem auto;
+}
+
+.contact-container {
+
+    margin-bottom: 2rem;
+
+    
+}
+
+
+
+.about-me-card .eyebrow {
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent-text);
+    margin-bottom: 0.5rem;
+}
+
+.about-me-card h2 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.02em;
+}
+
+.about-me-card > p {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 2.5rem;
+}
+
+.tech-stack {
+    border-top: 1px solid var(--border-color);
+    padding-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem; 
+    transition: var(--theme-transition);
+}
+
+.tech-stack-title {
+    width: 100%; 
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 640px) {
+    .about-me-card {
+        padding: 1.75rem;
+        border-radius: 1.25rem;
+    }
+
+    .about-me-card h2 {
+        font-size: 1.75rem;
+    }
+
+    .about-me-card > p {
+        font-size: 1rem;
+        margin-bottom: 1.75rem;
+    }
+    
+    .tech-stack {
+        gap: 0.5rem;
+    }
+}

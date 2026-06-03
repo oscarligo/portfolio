@@ -17,7 +17,7 @@
     <meta name="description" content={$_('header.description')} />
 </svelte:head>
 
-<nav>
+
 	<div class="app-shell">
 		<Navbar />
 
@@ -31,4 +31,3 @@
 			<a href="https://github.com/oscarligo/portfolio.git" target="_blank" rel="noopener noreferrer">GitHub</a>
 		</p>
 	</footer>	
-</nav>

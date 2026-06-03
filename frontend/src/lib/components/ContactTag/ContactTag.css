@@ -1,0 +1,121 @@
+/* src/lib/components/ContactTag/ContactTag.css */
+
+.contact-tag {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.6rem;
+	padding: 0.5rem 1rem;
+	border-radius: 2rem;
+	text-decoration: none;
+
+	--contact-color: #64748b;
+	--contact-icon-color: #000000;
+
+	background: linear-gradient(
+		135deg,
+		color-mix(in srgb, var(--contact-color) 10%, #ffffff) 0%,
+		color-mix(in srgb, var(--contact-color) 6%, #e2e8f0) 25%,
+		color-mix(in srgb, var(--contact-color) 12%, #ffffff) 50%,
+		color-mix(in srgb, var(--contact-color) 4%, #cbd5e1) 75%,
+		color-mix(in srgb, var(--contact-color) 8%, #f8fafc) 100%
+	);
+
+	border: 1px solid color-mix(in srgb, var(--contact-color) 30%, #94a3b8);
+
+	box-shadow:
+		var(--shadow-sm),
+		inset 0 1px 1px rgba(255, 255, 255, 0.8),
+		inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+
+	font-size: 0.9rem;
+	font-weight: 700;
+	color: color-mix(in srgb, var(--contact-color) 80%, #334155);
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+
+	transition:
+		var(--theme-transition),
+		transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+	user-select: none;
+	cursor: pointer;
+}
+
+html.dark .contact-tag {
+	--contact-icon-color: #ffffff;
+
+	background: linear-gradient(
+		135deg,
+		color-mix(in srgb, var(--contact-color) 15%, #1e293b) 0%,
+		color-mix(in srgb, var(--contact-color) 8%, #0f172a) 30%,
+		color-mix(in srgb, var(--contact-color) 22%, #334155) 50%,
+		color-mix(in srgb, var(--contact-color) 6%, #0f172a) 70%,
+		color-mix(in srgb, var(--contact-color) 12%, #1e293b) 100%
+	);
+
+	border: 1px solid color-mix(in srgb, var(--contact-color) 35%, #475569);
+	box-shadow:
+		var(--shadow-sm),
+		inset 0 1px 0px rgba(255, 255, 255, 0.15),
+		inset 0 -1px 2px rgba(0, 0, 0, 0.4);
+
+	color: #ffffff;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.contact-tag[data-contact='email'] {
+	--contact-color: #24292e;
+}
+.contact-tag[data-contact='linkedin'] {
+	--contact-color: #24292e;
+}
+.contact-tag[data-contact='github'] {
+	--contact-color: #24292e;
+}
+
+html.dark .contact-tag[data-contact='github'] {
+	--contact-color: #6e7681;
+}
+html.dark .contact-tag[data-contact='x'] {
+	--contact-color: #e2e8f0;
+}
+
+.contact-tag:hover {
+	transform: translateY(-3px);
+	--contact-icon-color: #ffffff;
+
+	background: linear-gradient(
+		135deg,
+		color-mix(in srgb, var(--contact-color) 30%, #ffffff) 0%,
+		var(--contact-color) 50%,
+		color-mix(in srgb, var(--contact-color) 80%, #000000) 100%
+	);
+
+	border-color: var(--contact-color);
+	color: #ffffff;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+
+	box-shadow:
+		0 6px 20px color-mix(in srgb, var(--contact-color) 35%, transparent),
+		inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+/* Ajuste del icono del contacto */
+.contact-icon {
+	width: 1.25rem;
+	height: 1.25rem;
+	flex-shrink: 0;
+	background-color: var(--contact-icon-color);
+	-webkit-mask: var(--contact-icon) center / contain no-repeat;
+	mask: var(--contact-icon) center / contain no-repeat;
+}
+
+.contact-tag[data-contact='email'] .contact-icon {
+	--contact-icon: url('/contact/email.svg');
+}
+
+.contact-tag[data-contact='github'] .contact-icon {
+	--contact-icon: url('/contact/github.svg');
+}
+
+.contact-tag[data-contact='linkedin'] .contact-icon {
+	--contact-icon: url('/contact/linkedin.svg');
+}

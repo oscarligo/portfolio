@@ -39,7 +39,9 @@ h2 {
     padding: 1.6rem;
     border: 1px dashed var(--border-color);
     border-radius: 24px;
-    background: color-mix(in srgb, var(--bg-surface) 82%, var(--bg-primary) 18%);
+    background:
+        radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 12%, transparent), transparent 34%),
+        color-mix(in srgb, var(--bg-primary) 94%, white 6%);
     color: var(--text-secondary);
 }
 

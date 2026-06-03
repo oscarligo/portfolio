@@ -35,6 +35,12 @@
 				"eyebrow": "Proyectos",
 				"title": "Trabajo reciente",
 				"description": "Estos son algunos de los proyectos en los que he trabajado recientemente. Cada uno incluye una descripción, las tecnologías utilizadas y enlaces a repositorios o demos cuando están disponibles."
+			},
+			"aboutMe": {
+				"eyebrow": "Sobre mí",
+				"title": "Desarrollador Full-Stack con pasión por la tecnología",
+				"description": "Con experiencia en desarrollo web y móvil, me gusta enfrentar desafíos técnicos y aprender nuevas tecnologías. En mi tiempo libre, disfruto explorar nuevas tendencias en el mundo del software.",
+				"techStack": "Mi stack incluye:"
 			}
 		},
 		"aboutPortfolio": {
