@@ -1,0 +1,20 @@
+{
+	"nav": {
+		"ariaLabel": "Primary navigation",
+		"brand": "Portfolio",
+		"home": "Home",
+		"aboutPortfolio": "AboutPortfolio",
+		"language": "Language",
+		"changeLanguage": "Change language"
+	},
+	"pages": {
+		"home": {
+			"title": "Home",
+			"message": "Hello world from Home."
+		},
+		"aboutPortfolio": {
+			"title": "AboutPortfolio",
+			"message": "Hello world from AboutPortfolio."
+		}
+	}
+}
