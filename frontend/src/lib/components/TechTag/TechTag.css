@@ -1,0 +1,12 @@
+.tech-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.42rem 0.8rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent) 10%, var(--bg-surface) 90%);
+    border: 1px solid color-mix(in srgb, var(--accent) 16%, var(--border-color) 84%);
+    color: var(--text-primary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}

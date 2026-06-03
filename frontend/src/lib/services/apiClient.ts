@@ -1,18 +1,5 @@
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api';
 
-// Base url from .env file
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-/**
- * Custom options for apiFetch.
- */
-interface FetchOptions extends RequestInit {
-    
-    json?: Record<string, any>; 
-}
-
-/**
- * Helper function to make API requests with error handling and JSON parsing.
- */
 export async function apiFetch<T>(endpoint: string): Promise<T> {
 	const url = `${BASE_URL}${endpoint}`;
 

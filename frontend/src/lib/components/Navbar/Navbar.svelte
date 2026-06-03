@@ -2,7 +2,6 @@
     import { page } from '$app/state';
     import { _ } from 'svelte-i18n';
     import LanSelector from '../LanSelector/LanSelector.svelte';
-	import Menu from '@lucide/svelte/icons/Menu';
     import './Navbar.css';
 
     let isMenuOpen = $state(false);
@@ -31,15 +30,16 @@
 
     <button 
         class="menu-toggle" 
+        class:open={isMenuOpen}
         onclick={toggleMenu} 
         aria-label="Toggle menu"
         aria-expanded={isMenuOpen}
     >
-        {#if isMenuOpen}
-            <Menu />
-        {:else}
-            <Menu />
-        {/if}
+        <span class="menu-toggle-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+        </span>
     </button>
 
     <div class="navbar-actions" class:show-mobile={isMenuOpen}>

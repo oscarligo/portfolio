@@ -1,0 +1,67 @@
+.projects-section {
+    display: grid;
+    gap: 1.6rem;
+}
+
+.section-heading {
+    max-width: 760px;
+}
+
+.eyebrow {
+    margin: 0 0 0.8rem;
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+h2 {
+    margin: 0;
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    line-height: 1.05;
+}
+
+.section-heading p:last-child {
+    margin: 0.9rem 0 0;
+    color: var(--text-secondary);
+    font-size: 1.02rem;
+    line-height: 1.65;
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.4rem;
+}
+
+.state-card {
+    padding: 1.6rem;
+    border: 1px dashed var(--border-color);
+    border-radius: 24px;
+    background: color-mix(in srgb, var(--bg-surface) 82%, var(--bg-primary) 18%);
+    color: var(--text-secondary);
+}
+
+.state-title {
+    margin: 0;
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.state-detail {
+    margin: 0.55rem 0 0;
+    word-break: break-word;
+}
+
+.state-error button {
+    margin-top: 1rem;
+    padding: 0.7rem 1rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
