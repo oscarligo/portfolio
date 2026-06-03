@@ -85,8 +85,7 @@ func main() {
 			r.Use(customMiddleware.AuthRequired(jwtSecret))
 
 			r.Post("/projects", projectHandler.CreateProject)
-			// r.Put("/projects/{id}", projectHandler.UpdateProject)
-			// r.Delete("/projects/{id}", projectHandler.DeleteProject)
+			r.Delete("/projects/{id}", projectHandler.DeleteProject)
 		})
 	})
 

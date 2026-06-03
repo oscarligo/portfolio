@@ -55,6 +55,16 @@ func safeJSONRawMessage(v interface{}) json.RawMessage {
 	return json.RawMessage(bytes)
 }
 
+func parseProjectID(r *http.Request) (int32, error) {
+	idStr := chi.URLParam(r, "id")
+	id, err := strconv.ParseInt(idStr, 10, 32)
+	if err != nil {
+		return 0, fmt.Errorf("invalid project id: %w", err)
+	}
+
+	return int32(id), nil
+}
+
 // Struct espejo global para la respuesta HTTP unificada
 type fullProjectResponse struct {
 	ID             int32           `json:"id"`
@@ -129,15 +139,13 @@ func (h *ProjectHandler) ListFeaturedProjects(w http.ResponseWriter, r *http.Req
 
 // GET /api/projects/{id}
 func (h *ProjectHandler) GetProject(w http.ResponseWriter, r *http.Request) {
-	// Get the project ID from the URL path and convert it to int32
-	idStr := chi.URLParam(r, "id")
-	id, err := strconv.ParseInt(idStr, 10, 32)
+	id, err := parseProjectID(r)
 	if err != nil {
 		http.Error(w, "ID de proyecto inválido", http.StatusBadRequest)
 		return
 	}
 
-	row, err := h.Store.GetProject(r.Context(), int32(id))
+	row, err := h.Store.GetProject(r.Context(), id)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) || errors.Is(err, sql.ErrNoRows) {
 			http.Error(w, "Project not found", http.StatusNotFound)
@@ -261,4 +269,31 @@ func (h *ProjectHandler) CreateProject(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(project)
+}
+
+// DELETE /api/projects/{id}
+func (h *ProjectHandler) DeleteProject(w http.ResponseWriter, r *http.Request) {
+	id, err := parseProjectID(r)
+	if err != nil {
+		http.Error(w, "Invalid project ID", http.StatusBadRequest)
+		return
+	}
+
+	_, err = h.Store.GetProject(r.Context(), id)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) || errors.Is(err, sql.ErrNoRows) {
+			http.Error(w, "Project not found", http.StatusNotFound)
+			return
+		}
+		http.Error(w, "Error while fetching the project: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = h.Store.DeleteProject(r.Context(), id)
+	if err != nil {
+		http.Error(w, "Error while deleting the project: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
