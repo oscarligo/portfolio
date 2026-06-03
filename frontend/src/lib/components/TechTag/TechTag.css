@@ -1,14 +1,158 @@
 .tech-tag {
+    --tech-color: var(--text-secondary);
+
     display: inline-flex;
     align-items: center;
-    padding: 0.42rem 0.8rem;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--accent) 10%, var(--bg-surface) 90%);
-    border: 1px solid color-mix(in srgb, var(--accent) 16%, var(--border-color) 84%);
-    color: var(--text-primary);
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    height: 12px;
+    gap: 0.5rem; 
+    padding: 0.375rem 0.75rem;
+    border-radius: 2rem;     
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--tech-color) 12%, #ffffff) 0%,
+        color-mix(in srgb, var(--tech-color) 8%, #e2e8f0) 25%,
+        color-mix(in srgb, var(--tech-color) 15%, #ffffff) 50%,
+        color-mix(in srgb, var(--tech-color) 5%, #cbd5e1) 75%,
+        color-mix(in srgb, var(--tech-color) 10%, #f8fafc) 100%
+    );
+    border: 1px solid color-mix(in srgb, var(--tech-color) 40%, #94a3b8);
+    color: color-mix(in srgb, var(--tech-color) 85%, var(--text-primary));
+    
+    box-shadow: 
+        var(--shadow-sm),
+        inset 0 1px 1px rgba(255, 255, 255, 0.8),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+    font-size: 0.875rem;
+    font-weight: 600; 
+    color: color-mix(in srgb, var(--tech-color) 70%, #334155);
+    height: 1rem;
+    
+    transition: var(--theme-transition), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+}
 
+html.dark .tech-tag {
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--tech-color) 18%, #1e293b) 0%,
+        color-mix(in srgb, var(--tech-color) 10%, #0f172a) 30%,
+        color-mix(in srgb, var(--tech-color) 25%, #334155) 50%,
+        color-mix(in srgb, var(--tech-color) 8%, #0f172a) 70%,
+        color-mix(in srgb, var(--tech-color) 15%, #1e293b) 100%
+    );
+    border: 1px solid color-mix(in srgb, var(--tech-color) 35%, var(--border-color));
+    color: color-mix(in srgb, var(--tech-color) 80%, var(--text-primary));
+}
+
+.tech-tag:hover {
+    transform: translateY(-1px); 
+}
+
+
+
+.tech-icon {
+    width: 1.25rem; 
+    height: 1.25rem; 
+    object-fit: contain;
+    flex-shrink: 0; 
+}
+
+.tech-tag span {
+    line-height: 1;
+}
+
+.tech-tag[data-tech='go'] {
+    --tech-color: #00add8;
+}
+
+.tech-tag[data-tech='rust'] {
+    --tech-color: #ce412b;
+}
+
+.tech-tag[data-tech='typescript'] {
+    --tech-color: #3178c6;
+}
+
+.tech-tag[data-tech='javascript'] {
+    --tech-color: #f7df1e;
+}
+
+.tech-tag[data-tech='python'] {
+    --tech-color: #3776ab;
+}
+
+.tech-tag[data-tech='java'] {
+    --tech-color: #007396;
+}
+
+.tech-tag[data-tech='cpp'] {
+    --tech-color: #00599c;
+}
+
+.tech-tag[data-tech='kotlin'] {
+    --tech-color: #7f52ff;
+}
+
+.tech-tag[data-tech='php'] {
+    --tech-color: #777bb4;
+}
+
+.tech-tag[data-tech='css'] {
+    --tech-color: #1572b6;
+}
+
+.tech-tag[data-tech='svelte'] {
+    --tech-color: #ff3e00;
+}
+
+.tech-tag[data-tech='react'] {
+    --tech-color: #61dafb;
+}
+
+.tech-tag[data-tech='nextdotjs'] {
+    --tech-color: #adafb4;
+}
+
+.tech-tag[data-tech='tailwindcss'] {
+    --tech-color: #38bdf8;
+}
+
+.tech-tag[data-tech='express'],
+.tech-tag[data-tech='expressdotjs'] {
+    --tech-color: #adafb4;
+}
+
+.tech-tag[data-tech='postgresql'] {
+    --tech-color: #4169e1;
+}
+
+.tech-tag[data-tech='neo4j'] {
+    --tech-color: #008cc1;
+}
+
+.tech-tag[data-tech='redis'] {
+    --tech-color: #d82c20;
+}
+
+.tech-tag[data-tech='docker'] {
+    --tech-color: #2496ed;
+}
+
+.tech-tag[data-tech='googlecloud'] {
+    --tech-color: #4285f4;
+}
+
+.tech-tag[data-tech='azure'] {
+    --tech-color: #0078d4;
+}
+
+.tech-tag[data-tech='nginx'] {
+    --tech-color: #009639;
+}
+
+.tech-tag[data-tech='git'] {
+    --tech-color: #f05032;
+}
+
+.tech-tag[data-tech='arduino'] {
+    --tech-color: #00979d;
 }

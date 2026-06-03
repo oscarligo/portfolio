@@ -53,7 +53,7 @@
 		{#if project.technologies.length}
 			<div class="project-tags" aria-label={$_('projects.technologies')}>
 				{#each project.technologies as technology (technology.id)}
-					<TechTag label={technology.name} title={technology.icon_slug || technology.name} />
+					<TechTag label={technology.name} icon_slug={technology.icon_slug} />
 				{/each}
 			</div>
 		{/if}
