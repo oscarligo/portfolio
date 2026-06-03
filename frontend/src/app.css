@@ -51,3 +51,32 @@ html.dark {
 	--accent: #60a5fa;       
 	--accent-hover: #93c5fd;
 }
+
+.footer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 1rem;
+	text-align: center;
+	padding: 2rem 0;
+	color: var(--text-secondary);
+	font-size: 1.125rem;
+	font-family: var(--font-sans);
+}
+
+.footer p {
+	margin: 0;
+	font-size: inherit;
+}
+
+.footer a {
+	color: var(--accent);
+	text-decoration: none;
+	font-weight: 800;
+}
+
+.footer a:hover {
+	color: var(--accent-hover);
+	text-decoration: underline;
+
+}

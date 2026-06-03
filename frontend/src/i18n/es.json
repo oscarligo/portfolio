@@ -18,7 +18,7 @@
 		"technologies": "Tecnologías",
 		"actions": {
 			"repository": "Repositorio",
-			"liveDemo": "Demo en vivo",
+			"liveDemo": "Despliegue",
 			"video": "Video"
 		}
 	},
@@ -71,7 +71,7 @@
 					},
 					"persistence": {
 						"title": "PostgreSQL con pgx y sqlc",
-						"description": "Las consultas viven en archivos SQL y `sqlc` genera tipos de Go, lo que ofrece control sobre la base sin introducir un ORM pesado."
+						"description": "Las consultas viven en archivos SQL y `sqlc` genera tipos de Go, lo que ofrece control sobre la base de datossin introducir un ORM pesado."
 					},
 					"auth": {
 						"title": "JWT para la parte administrativa",
@@ -103,5 +103,8 @@
 				}
 			}
 		}
+	},
+	"footer": {
+		"text": "Hecho por Oscar. Código disponible en "
 	}
 }

@@ -60,19 +60,3 @@ El backend está desarrollado en `Go` y expone un API REST pequeño y directo.
 - `frontend`: aplicación SvelteKit que consume el backend usando `VITE_API_BASE_URL`.
 
 La configuración base está documentada en `.env.example`, incluyendo puertos, credenciales del administrador y variables necesarias para R2.
-
-## Producción con Docker
-
-El repositorio incluye una configuración separada para producción en `docker-compose.prod.yml`.
-
-- `frontend/Dockerfile.prod` genera una build optimizada del frontend y la sirve con un servidor Node ligero.
-- `infra/nginx/portfolio.prod.conf` publica un único punto de entrada y enruta `/api` hacia el backend.
-- El frontend de producción se compila con `VITE_API_BASE_URL=/api`, de modo que navegador y API comparten el mismo origen público.
-
-### Levantar producción
-
-```bash
-docker compose -f docker-compose.prod.yml up --build -d
-```
-
-El puerto público lo controla `APP_PORT` y por defecto usa `80`.
